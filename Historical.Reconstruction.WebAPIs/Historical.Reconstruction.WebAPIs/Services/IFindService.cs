@@ -8,7 +8,7 @@ namespace Historical.Reconstruction.WebAPIs.Services
         Task<PaginatedResponse<FindResponse>> GetAllFinds(PaginationParams paginationParams);
         Task<FindResponse?> GetFindById(Guid id);
         Task<FindResponse?> GetFindByName(string name);
-        Task<FindResponse> UpdateFind(Guid id, UpdateFindRequest request);
+        Task<FindResponse?> UpdateFind(Guid id, UpdateFindRequest request);
         Task<bool> DeleteFind(Guid id);
     }
 }

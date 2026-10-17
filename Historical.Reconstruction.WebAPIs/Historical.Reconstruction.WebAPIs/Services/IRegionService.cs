@@ -7,7 +7,7 @@ namespace Historical.Reconstruction.WebAPIs.Services
         Task<List<RegionResponse>> GetRegions();
         Task<RegionResponse?> GetRegionById(Guid id);
         Task<RegionResponse> CreateRegion(RegionRequest request);
-        Task<RegionResponse> UpdateRegion(Guid id, RegionRequest request);
+        Task<RegionResponse?> UpdateRegion(Guid id, RegionRequest request);
         Task<bool> DeleteRegion(Guid id);
     }
 }

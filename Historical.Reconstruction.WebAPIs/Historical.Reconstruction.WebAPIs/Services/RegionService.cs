@@ -44,11 +44,11 @@ namespace Historical.Reconstruction.WebAPIs.Services
             return regions.Select(MapToResponse).ToList();
         }
 
-        public async Task<RegionResponse> UpdateRegion(Guid id, RegionRequest request)
+        public async Task<RegionResponse?> UpdateRegion(Guid id, RegionRequest request)
         {
             var entity = await _dbContext.Regions.FirstOrDefaultAsync(r=>r.Id == id);
             if (entity == null)
-                throw new InvalidOperationException("Region not found");
+                return null;
 
             entity.Country = request.Country;
             entity.Region = request.Region;

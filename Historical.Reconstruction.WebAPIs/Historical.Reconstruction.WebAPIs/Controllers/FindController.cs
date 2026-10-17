@@ -16,7 +16,7 @@ namespace Historical.Reconstruction.WebAPIs.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<FindResponse>>> GetFinds(PaginationParams paginationParams)
+        public async Task<ActionResult<PaginatedResponse<FindResponse>>> GetFinds([FromQuery] PaginationParams paginationParams)
         {
             var finds = await _findService.GetAllFinds(paginationParams);
             return Ok(finds);
@@ -46,7 +46,7 @@ namespace Historical.Reconstruction.WebAPIs.Controllers
             var find = await _findService.CreateFind(request);
             return Ok(find);
         }
-        
+
         [HttpPut("{id}")]
         public async Task<ActionResult<FindResponse>> UpdateFind(Guid id, UpdateFindRequest request)
         {

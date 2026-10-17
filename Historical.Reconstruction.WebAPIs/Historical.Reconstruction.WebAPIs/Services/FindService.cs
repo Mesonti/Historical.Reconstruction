@@ -34,7 +34,7 @@ namespace Historical.Reconstruction.WebAPIs.Services
 
         public async Task<PaginatedResponse<FindResponse>> GetAllFinds(PaginationParams paginationParams)
         {
-            var query = _dbContext.Sources.AsQueryable();
+            var query = _dbContext.Sources.AsNoTracking().AsQueryable();
             var totalCount = await query.CountAsync();
 
             var finds = await query
@@ -59,6 +59,7 @@ namespace Historical.Reconstruction.WebAPIs.Services
             var find = await _dbContext.Sources
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == id);
+
             if (find != null)
                 return MapToFindResponse(find);
             return null;
@@ -69,18 +70,18 @@ namespace Historical.Reconstruction.WebAPIs.Services
             var find = await _dbContext.Sources
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Name == name);
+
             if (find != null)
                 return MapToFindResponse(find);
             return null;
         }
 
-        public async Task<FindResponse> UpdateFind(Guid id, UpdateFindRequest request)
+        public async Task<FindResponse?> UpdateFind(Guid id, UpdateFindRequest request)
         {
             var source = await _dbContext.Sources
-                .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == id);
             if (source == null)
-                throw new InvalidOperationException($"Find with id {id} not found");
+                return null;
 
             source.Name = request.Name;
             source.Description = request.Description;
@@ -96,10 +97,10 @@ namespace Historical.Reconstruction.WebAPIs.Services
         public async Task<bool> DeleteFind(Guid id)
         {
             var source = await _dbContext.Sources
-                .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == id);
+
             if (source == null)
-                throw new InvalidOperationException($"Find with id {id} not found");
+                return false;
 
             _dbContext.Sources.Remove(source);
             await _dbContext.SaveChangesAsync();
