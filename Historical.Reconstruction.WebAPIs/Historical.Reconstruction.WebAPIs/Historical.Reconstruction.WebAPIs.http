@@ -1,0 +1,6 @@
+@Historical.Reconstruction.WebAPIs_HostAddress = http://localhost:5145
+
+GET {{Historical.Reconstruction.WebAPIs_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
