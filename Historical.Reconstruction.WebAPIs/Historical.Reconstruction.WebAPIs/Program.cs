@@ -9,7 +9,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<FindsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SourcesConnection")));
+
 builder.Services.AddScoped<IFindService, FindService>();
+builder.Services.AddScoped<IRegionService, RegionService>();
 
 var app = builder.Build();
 
