@@ -1,8 +1,7 @@
-﻿namespace Historical.Reconstruction.WebAPIs.DTOs
+﻿namespace Historical.Reconstruction.WebAPIs.DTOs.FindDTOs
 {
-    public class FindResponse
+    public class CreateFindRequest
     {
-        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public Guid RegionId { get; set; }
         public Guid FindCategoryId { get; set; }

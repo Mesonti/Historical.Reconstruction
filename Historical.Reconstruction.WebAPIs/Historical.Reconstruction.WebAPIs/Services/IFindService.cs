@@ -1,15 +1,14 @@
-﻿using Historical.Reconstruction.WebAPIs.DTOs;
-using Historical.Reconstruction.WebAPIs.Entities;
+﻿using Historical.Reconstruction.WebAPIs.DTOs.FindDTOs;
 
 namespace Historical.Reconstruction.WebAPIs.Services
 {
     public interface IFindService
     {
-        public Task<FindResponse> CreateFind(CreateFindRequest request);
-        public Task<List<FindResponse>> GetAllFinds();
-        public Task<FindResponse?> GetFindById(Guid id);
-        public Task<FindResponse?> GetFindByName(string name);
-        public Task<FindResponse> UpdateFind(Guid id, UpdateFindRequest request);
-        public Task<bool> DeleteFind(Guid id);
+        Task<FindResponse> CreateFind(CreateFindRequest request);
+        Task<PaginatedResponse<FindResponse>> GetAllFinds(PaginationParams paginationParams);
+        Task<FindResponse?> GetFindById(Guid id);
+        Task<FindResponse?> GetFindByName(string name);
+        Task<FindResponse> UpdateFind(Guid id, UpdateFindRequest request);
+        Task<bool> DeleteFind(Guid id);
     }
 }

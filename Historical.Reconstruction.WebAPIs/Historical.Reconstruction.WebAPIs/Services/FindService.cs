@@ -1,5 +1,5 @@
 ﻿using Historical.Reconstruction.WebAPIs.DbContexts;
-using Historical.Reconstruction.WebAPIs.DTOs;
+using Historical.Reconstruction.WebAPIs.DTOs.FindDTOs;
 using Historical.Reconstruction.WebAPIs.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,17 +26,32 @@ namespace Historical.Reconstruction.WebAPIs.Services
                 Description = request.Description,
                 SourceUrl = request.SourceUrl
             };
+
             await _dbContext.Sources.AddAsync(entity);
             await _dbContext.SaveChangesAsync();
             return MapToFindResponse(entity);
         }
 
-        public async Task<List<FindResponse>> GetAllFinds()
+        public async Task<PaginatedResponse<FindResponse>> GetAllFinds(PaginationParams paginationParams)
         {
-            var finds = await _dbContext.Sources
-                .AsNoTracking()
+            var query = _dbContext.Sources.AsQueryable();
+            var totalCount = await query.CountAsync();
+
+            var finds = await query
+                .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+                .Take(paginationParams.PageSize)
                 .ToListAsync();
-            return finds.Select(e => MapToFindResponse(e)).ToList();
+            var response = new PaginatedResponse<FindResponse>
+            {
+                Items = finds.Select(MapToFindResponse).ToList(),
+                Pagination = new PaginationParams
+                {
+                    PageNumber = paginationParams.PageNumber,
+                    PageSize = paginationParams.PageSize,
+                    TotalCount = totalCount
+                }
+            };
+            return response;
         }
 
         public async Task<FindResponse?> GetFindById(Guid id)
@@ -45,13 +60,8 @@ namespace Historical.Reconstruction.WebAPIs.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == id);
             if (find != null)
-            {
                 return MapToFindResponse(find);
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public async Task<FindResponse?> GetFindByName(string name)
@@ -60,13 +70,8 @@ namespace Historical.Reconstruction.WebAPIs.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Name == name);
             if (find != null)
-            {
                 return MapToFindResponse(find);
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public async Task<FindResponse> UpdateFind(Guid id, UpdateFindRequest request)
@@ -75,9 +80,8 @@ namespace Historical.Reconstruction.WebAPIs.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == id);
             if (source == null)
-            {
                 throw new InvalidOperationException($"Find with id {id} not found");
-            }
+
             source.Name = request.Name;
             source.Description = request.Description;
             source.RegionId = request.RegionId;
@@ -95,9 +99,8 @@ namespace Historical.Reconstruction.WebAPIs.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == id);
             if (source == null)
-            {
                 throw new InvalidOperationException($"Find with id {id} not found");
-            }
+
             _dbContext.Sources.Remove(source);
             await _dbContext.SaveChangesAsync();
             return true;

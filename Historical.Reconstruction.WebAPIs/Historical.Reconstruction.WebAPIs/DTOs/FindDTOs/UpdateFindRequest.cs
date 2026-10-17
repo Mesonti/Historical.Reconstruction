@@ -1,4 +1,4 @@
-﻿namespace Historical.Reconstruction.WebAPIs.DTOs
+﻿namespace Historical.Reconstruction.WebAPIs.DTOs.FindDTOs
 {
     public class UpdateFindRequest
     {
