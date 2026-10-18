@@ -1,33 +1,11 @@
-import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useFind } from '../features/finds/hooks/useFind.ts'
-import { useUploadFindImage } from '../features/finds/hooks/useUploadFindImage.ts'
 import { formatPeriod } from '../features/finds/lib/formatPeriod.ts'
 import { HttpError } from '../shared/api/httpClient.ts'
 
 export function FindDetailsPage() {
   const { id } = useParams<{ id: string }>()
   const { data: find, error, isError, isPending, refetch } = useFind(id)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [caption, setCaption] = useState('')
-  const [fileInputKey, setFileInputKey] = useState(0)
-  const uploadImage = useUploadFindImage(id ?? '')
-
-  function handleImageUpload(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    if (!selectedFile || !id) return
-
-    uploadImage.mutate(
-      { file: selectedFile, caption },
-      {
-        onSuccess: () => {
-          setSelectedFile(null)
-          setCaption('')
-          setFileInputKey((current) => current + 1)
-        },
-      },
-    )
-  }
 
   if (!id) {
     return <Navigate to="/finds" replace />
@@ -115,38 +93,6 @@ export function FindDetailsPage() {
               </a>
             )}
 
-            <form className="image-upload" onSubmit={handleImageUpload}>
-              <h3>Добавить изображение</h3>
-              <label>
-                <span>Файл</span>
-                <input
-                  key={fileInputKey}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  required
-                  onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
-                />
-              </label>
-              <label>
-                <span>Подпись</span>
-                <input
-                  type="text"
-                  maxLength={50}
-                  value={caption}
-                  placeholder="Необязательно"
-                  onChange={(event) => setCaption(event.target.value)}
-                />
-              </label>
-              <button type="submit" disabled={!selectedFile || uploadImage.isPending}>
-                {uploadImage.isPending ? 'Загружаем…' : 'Загрузить'}
-              </button>
-              {uploadImage.isError && (
-                <p className="image-upload__error" role="alert">
-                  {uploadImage.error.message}
-                </p>
-              )}
-              <p className="image-upload__hint">JPEG, PNG или WebP, до 5 МБ.</p>
-            </form>
           </aside>
         </div>
       </article>

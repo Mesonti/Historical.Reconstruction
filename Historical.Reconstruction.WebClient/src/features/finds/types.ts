@@ -57,3 +57,12 @@ export interface PagedResponse<T> {
   totalCount: number
   totalPages: number
 }
+
+export interface ApiPaginatedResponse<T> {
+  items: T[]
+  pagination: {
+    pageNumber: number
+    pageSize: number
+    totalCount: number
+  }
+}

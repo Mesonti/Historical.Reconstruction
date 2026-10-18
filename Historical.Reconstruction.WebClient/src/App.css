@@ -81,6 +81,11 @@
   background: rgba(255, 253, 248, 0.72);
 }
 
+.find-filters--compact {
+  grid-template-columns: minmax(150px, 220px) auto;
+  justify-content: start;
+}
+
 .find-filters label {
   display: grid;
   gap: 7px;

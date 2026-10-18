@@ -1,5 +1,6 @@
 import { httpClient } from '../../../shared/api/httpClient.ts'
 import type {
+  ApiPaginatedResponse,
   CreateFindRequest,
   FindCategory,
   FindFilters,
@@ -11,31 +12,30 @@ import type {
 
 export function getFinds(filters: FindFilters) {
   const searchParams = new URLSearchParams({
-    page: filters.page.toString(),
+    pageNumber: filters.page.toString(),
     pageSize: filters.pageSize.toString(),
   })
 
-  if (filters.query) searchParams.set('query', filters.query)
-  if (filters.country) searchParams.set('country', filters.country)
-  if (filters.regionId) searchParams.set('regionId', filters.regionId)
-  if (filters.yearFrom !== undefined) {
-    searchParams.set('yearFrom', filters.yearFrom.toString())
-  }
-  if (filters.yearTo !== undefined) {
-    searchParams.set('yearTo', filters.yearTo.toString())
-  }
-
-  return httpClient<PagedResponse<HistoricalFind>>(
-    `/api/finds?${searchParams.toString()}`,
-  )
+  return httpClient<ApiPaginatedResponse<ApiHistoricalFind>>(
+    `/api/Find?${searchParams.toString()}`,
+  ).then((response): PagedResponse<HistoricalFind> => ({
+    items: response.items.map(normalizeFind),
+    page: response.pagination.pageNumber,
+    pageSize: response.pagination.pageSize,
+    totalCount: response.pagination.totalCount,
+    totalPages:
+      response.pagination.pageSize > 0
+        ? Math.ceil(response.pagination.totalCount / response.pagination.pageSize)
+        : 0,
+  }))
 }
 
 export function getFind(id: string) {
-  return httpClient<HistoricalFind>(`/api/finds/${id}`)
+  return httpClient<ApiHistoricalFind>(`/api/Find/${id}`).then(normalizeFind)
 }
 
 export function getRegions() {
-  return httpClient<Region[]>('/api/regions')
+  return httpClient<Region[]>('/api/Region')
 }
 
 export function getCategories() {
@@ -43,13 +43,13 @@ export function getCategories() {
 }
 
 export function createFind(request: CreateFindRequest) {
-  return httpClient<HistoricalFind>('/api/finds', {
+  return httpClient<ApiHistoricalFind>('/api/Find', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(request),
-  })
+  }).then(normalizeFind)
 }
 
 export function uploadFindImage(findId: string, file: File, caption: string) {
@@ -61,4 +61,15 @@ export function uploadFindImage(findId: string, file: File, caption: string) {
     method: 'POST',
     body: formData,
   })
+}
+
+type ApiHistoricalFind = Omit<HistoricalFind, 'images'> & {
+  images?: FindImage[]
+}
+
+function normalizeFind(find: ApiHistoricalFind): HistoricalFind {
+  return {
+    ...find,
+    images: find.images ?? [],
+  }
 }
