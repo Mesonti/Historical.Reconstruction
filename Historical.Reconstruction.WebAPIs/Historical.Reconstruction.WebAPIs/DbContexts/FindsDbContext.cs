@@ -9,7 +9,7 @@ namespace Historical.Reconstruction.WebAPIs.DbContexts
 
         public DbSet<RegionEntity> Regions { get; set; }
 
-        public DbSet<FindCategoryEntity> SourceCategories { get; set; }
+        public DbSet<FindCategoryEntity> FindCategories { get; set; }
 
         public DbSet<SourceImageEntity> SourceImages { get; set; }
 

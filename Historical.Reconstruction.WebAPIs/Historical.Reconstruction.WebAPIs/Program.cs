@@ -12,7 +12,7 @@ builder.Services.AddDbContext<FindsDbContext>(options => options.UseSqlServer(bu
 
 builder.Services.AddScoped<IFindService, FindService>();
 builder.Services.AddScoped<IRegionService, RegionService>();
-builder.Services.AddScoped<ISaleService, SaleService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 var app = builder.Build();
 
