@@ -5,3 +5,8 @@
 /Historical.Reconstruction.WebAPIs/.vs
 /Historical.Reconstruction.WebAPIs/Historical.Reconstruction.WebAPIs/bin/Debug/net10.0
 /Historical.Reconstruction.WebAPIs/Historical.Reconstruction.WebAPIs/obj
+/Historical.Reconstruction.WebAPIs/Historical.Reconstruction.WebAPIs/sources.db
+/Historical.Reconstruction.WebAPIs/Historical.Reconstruction.WebAPIs/sources.db-shm
+/Historical.Reconstruction.WebAPIs/Historical.Reconstruction.WebAPIs/sources.db-wal
+/Historical.Reconstruction.WebAPIs/Historical.Reconstruction.WebAPIs/wwwroot/uploads/*
+!/Historical.Reconstruction.WebAPIs/Historical.Reconstruction.WebAPIs/wwwroot/uploads/.gitkeep
