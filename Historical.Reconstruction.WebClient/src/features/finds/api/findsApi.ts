@@ -39,7 +39,7 @@ export function getRegions() {
 }
 
 export function getCategories() {
-  return httpClient<FindCategory[]>('/api/categories')
+  return httpClient<FindCategory[]>('/api/Category')
 }
 
 export function createFind(request: CreateFindRequest) {
