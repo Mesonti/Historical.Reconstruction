@@ -34,10 +34,11 @@ namespace Historical.Reconstruction.WebAPIs.Services
 
         public async Task<PaginatedResponse<FindResponse>> GetAllFinds(PaginationParams paginationParams)
         {
-            var query = _dbContext.Sources.AsNoTracking().AsQueryable();
+            var query = _dbContext.Sources.AsNoTracking().Include(f => f.Images).AsQueryable();
             var totalCount = await query.CountAsync();
 
             var finds = await query
+                .OrderBy(f => f.Id)
                 .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
                 .Take(paginationParams.PageSize)
                 .ToListAsync();
@@ -58,6 +59,7 @@ namespace Historical.Reconstruction.WebAPIs.Services
         {
             var find = await _dbContext.Sources
                 .AsNoTracking()
+                .Include(f => f.Images)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (find != null)
@@ -69,6 +71,7 @@ namespace Historical.Reconstruction.WebAPIs.Services
         {
             var find = await _dbContext.Sources
                 .AsNoTracking()
+                .Include(f => f.Images)
                 .FirstOrDefaultAsync(s => s.Name == name);
 
             if (find != null)
@@ -79,6 +82,7 @@ namespace Historical.Reconstruction.WebAPIs.Services
         public async Task<FindResponse?> UpdateFind(Guid id, UpdateFindRequest request)
         {
             var source = await _dbContext.Sources
+                .Include(f => f.Images)
                 .FirstOrDefaultAsync(s => s.Id == id);
             if (source == null)
                 return null;
@@ -118,7 +122,15 @@ namespace Historical.Reconstruction.WebAPIs.Services
                 DateFromYear = entity.DateFromYear,
                 DateToYear = entity.DateToYear,
                 Description = entity.Description,
-                SourceUrl = entity.SourceUrl
+                SourceUrl = entity.SourceUrl,
+                Images = entity.Images.OrderBy(i => i.SortOrder).ThenBy(i => i.Id)
+                    .Select(i => new FindImageResponse
+                    {
+                        Id = i.Id,
+                        Url = i.StorageKey,
+                        Caption = i.Caption,
+                        SortOrder = i.SortOrder
+                    }).ToList()
             };
         }
     }

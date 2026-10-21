@@ -10,5 +10,6 @@
         public int DateToYear { get; set; }
         public string Description { get; set; }
         public string? SourceUrl { get; set; }
+        public List<FindImageResponse> Images { get; set; } = new();
     }
 }
